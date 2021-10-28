@@ -7,16 +7,18 @@ import { EventsController } from './events.controller';
 
 @Module({
   imports: [TypeOrmModule.forRoot({
-    type: 'mysql',
-    //host: '172.17.0.1',
-    host: 'localhost',
-    port: 3304,
-    username: 'admin',
-    password: 'admin',
-    database: 'nest_events',
-    entities: [Event],
-    synchronize: true
-  })],
+      type: 'mysql',
+      //host: '172.17.0.1',
+      host: 'localhost',
+      port: 3304,
+      username: 'admin',
+      password: 'admin',
+      database: 'nest_events',
+      entities: [Event],
+      synchronize: true
+    }),
+    TypeOrmModule.forFeature([Event])
+  ],
   controllers: [AppController, EventsController],
   providers: [AppService],
 })

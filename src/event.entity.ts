@@ -10,7 +10,7 @@ export class Event {
     name: string;
 
     @Column()
-    descriptiomn: string;
+    description: string;
 
     @Column()
     when: Date;
