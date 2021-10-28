@@ -47,7 +47,7 @@ export class EventsController {
             when: input.when ? new Date(input.when) : this.events[index].when
         };
 
-        return this.events[index];
+        return this.events[index];  
     }
 
     @Delete(':id')
