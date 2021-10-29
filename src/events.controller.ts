@@ -47,6 +47,7 @@ export class EventsController {
 
     @Post()
     //async create(@Body(ValidationPipe) input: CreateEventDto) { // Use this option if the ValidationPipe doesn't enabled in main.ts
+    //async create(@Body(new ValidationPipe({groups: ['create']})) input: CreateEventDto) {
     async create(@Body() input: CreateEventDto) {
         return await this.repository.save({
             ...input,

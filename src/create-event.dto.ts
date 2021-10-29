@@ -14,6 +14,8 @@ export class CreateEventDto {
     when: string;
 
     @IsString()
+    //@Length(5, 255, {groups: ['create']}) // Vlidation groups defined in controller
+    //@Length(10, 20, {groups: ['update']})
     @Length(5, 255)
     address: string;
 }
