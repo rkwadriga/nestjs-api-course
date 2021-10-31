@@ -16,6 +16,17 @@ import { EventsModule } from './events/events.module';
       expandVariables: true // Allows to do something like "SUPPORT_EMAIL=support@${APP_URL}" in .env files
     }),
     TypeOrmModule.forRootAsync({useFactory: ormConfig}),
+    /*TypeOrmModule.forRoot({
+        type: 'mysql',
+        //host: '172.17.0.1',
+        host: process.env.DB_HOST,
+        port: Number(process.env.DB_PORT),
+        username: process.env.DB_USER,
+        password: process.env.DB_PASSWORD,
+        database: process.env.DB_NAME,
+        entities: [Event],
+        synchronize: true
+    }),*/
     EventsModule
   ],
   controllers: [AppController],
