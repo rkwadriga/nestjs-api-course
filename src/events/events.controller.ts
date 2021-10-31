@@ -16,6 +16,7 @@ import {CreateEventDto} from './create-event.dto';
 import {Event} from './event.entity';
 import {UpdateEventDto} from './update.event.dto';
 import {Attendee} from "./attendee.entity";
+import {EventsService} from "./events.service";
 
 @Controller('/events')
 export class EventsController {
@@ -26,7 +27,9 @@ export class EventsController {
         private readonly repository: Repository<Event>,
 
         @InjectRepository(Attendee)
-        private readonly attendeeRepository: Repository<Attendee>
+        private readonly attendeeRepository: Repository<Attendee>,
+        
+        private readonly eventsService: EventsService
     ) {}
     
     @Get()
@@ -63,31 +66,40 @@ export class EventsController {
     
     @Get('/practice2')
     async practice2() {
-        const event = await this.repository.findOne(1, {
+        /*const event = await this.repository.findOne(1, {
             //loadEagerRelations: false // Do not load the related records
             relations: ['attendees'] // Load specific relations
-        });
+        });*/
         //return await this.repository.findOne(1);
         
         //const event = await this.repository.findOne(1);
         /*const event = new Event();
         event.id = 1;*/
         
-        const attendee = new Attendee();
+        /*const attendee = new Attendee();
         attendee.name = 'Using cascade';
-        /*attendee.event = event;
-        await this.attendeeRepository.save(attendee);*/
+        /!*attendee.event = event;
+        await this.attendeeRepository.save(attendee);*!/
         event.attendees.push(attendee);
         await this.repository.save(event);
         
-        return event;
+        return event;*/
         
         //return await this.attendeeRepository.find({event: event});
+        
+        return  this.repository.createQueryBuilder('e')
+            .select([
+                'e.id',
+                'e.name'
+            ])
+            .orderBy('e.id', 'DESC')
+            .take(3) // Limit
+            .getMany();
     }
     
     @Get(':id')
     async findOne(@Param('id') id) {
-        const event = await this.repository.findOne(id);
+        const event = await this.eventsService.getEvent(id);
         if (!event) {
             throw new NotFoundException(`Event #${id} not found`);
         }
