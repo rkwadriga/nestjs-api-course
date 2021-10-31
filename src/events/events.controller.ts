@@ -10,11 +10,12 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Like, MoreThan, Repository } from 'typeorm';
-import { CreateEventDto } from './create-event.dto';
-import { Event } from './event.entity';
-import { UpdateEventDto } from './update.event.dto';
+import {InjectRepository} from '@nestjs/typeorm';
+import {Like, MoreThan, Repository} from 'typeorm';
+import {CreateEventDto} from './create-event.dto';
+import {Event} from './event.entity';
+import {UpdateEventDto} from './update.event.dto';
+import {Attendee} from "./attendee.entity";
 
 @Controller('/events')
 export class EventsController {
@@ -23,6 +24,9 @@ export class EventsController {
     constructor(
         @InjectRepository(Event)
         private readonly repository: Repository<Event>,
+
+        @InjectRepository(Attendee)
+        private readonly attendeeRepository: Repository<Attendee>
     ) {}
     
     @Get()
@@ -59,11 +63,26 @@ export class EventsController {
     
     @Get('/practice2')
     async practice2() {
-        return await this.repository.findOne(1, {
+        const event = await this.repository.findOne(1, {
             //loadEagerRelations: false // Do not load the related records
             relations: ['attendees'] // Load specific relations
         });
         //return await this.repository.findOne(1);
+        
+        //const event = await this.repository.findOne(1);
+        /*const event = new Event();
+        event.id = 1;*/
+        
+        const attendee = new Attendee();
+        attendee.name = 'Using cascade';
+        /*attendee.event = event;
+        await this.attendeeRepository.save(attendee);*/
+        event.attendees.push(attendee);
+        await this.repository.save(event);
+        
+        return event;
+        
+        //return await this.attendeeRepository.find({event: event});
     }
     
     @Get(':id')

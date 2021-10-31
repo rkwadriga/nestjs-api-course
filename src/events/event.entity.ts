@@ -19,7 +19,9 @@ export class Event {
   address: string;
   
   @OneToMany(() => Attendee, (attendee) => attendee.event, {
-    eager: true // Load the related records always
+    //eager: true, // Load the related records always
+    //cascade: ['insert', 'update'], // For specific operations
+    cascade: true // For all operations
   })
   attendees: Attendee[];
 }
