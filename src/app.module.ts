@@ -7,44 +7,46 @@ import { AppJapanService } from './app.japan.service';
 import { AppService } from './app.service';
 import ormConfig from './config/orm.config';
 import { EventsModule } from './events/events.module';
+import {SchoolModule} from "./school/school.module";
 
 @Module({
-  imports: [
-    ConfigModule.forRoot({
-      isGlobal: true,
-      load: [ormConfig],
-      expandVariables: true // Allows to do something like "SUPPORT_EMAIL=support@${APP_URL}" in .env files
-    }),
-    TypeOrmModule.forRootAsync({useFactory: ormConfig}),
-    /*TypeOrmModule.forRoot({
-        type: 'mysql',
-        //host: '172.17.0.1',
-        host: process.env.DB_HOST,
-        port: Number(process.env.DB_PORT),
-        username: process.env.DB_USER,
-        password: process.env.DB_PASSWORD,
-        database: process.env.DB_NAME,
-        entities: [Event],
-        synchronize: true
-    }),*/
-    EventsModule
-  ],
-  controllers: [AppController],
-  providers: [
-      {
-        provide: AppService,
-        useClass: AppJapanService
-      },
-      {
-        provide: 'APP_NAME',
-        useValue: 'Nest Events Backend'
-      },
-      {
-        provide: 'MESSAGE',
-        inject: [AppDummy],
-        useFactory: (app) => `${app.dummy()}`
-      },
-      AppDummy
-  ],
-})
-export class AppModule {}
+    imports: [
+        ConfigModule.forRoot({
+            isGlobal: true,
+            load: [ormConfig],
+            expandVariables: true // Allows to do something like "SUPPORT_EMAIL=support@${APP_URL}" in .env files
+        }),
+        TypeOrmModule.forRootAsync({useFactory: ormConfig}),
+        /*TypeOrmModule.forRoot({
+            type: 'mysql',
+            //host: '172.17.0.1',
+            host: process.env.DB_HOST,
+            port: Number(process.env.DB_PORT),
+            username: process.env.DB_USER,
+            password: process.env.DB_PASSWORD,
+            database: process.env.DB_NAME,
+            entities: [Event],
+            synchronize: true
+        }),*/
+        EventsModule,
+        SchoolModule
+    ],
+    controllers: [AppController],
+    providers: [
+        {
+            provide: AppService,
+            useClass: AppJapanService
+        },
+        {
+            provide: 'APP_NAME',
+            useValue: 'Nest Events Backend'
+        },
+        {
+            provide: 'MESSAGE',
+            inject: [AppDummy],
+            useFactory: (app) => `${app.dummy()}`
+        },
+        AppDummy
+    ],
+    })
+    export class AppModule {}
