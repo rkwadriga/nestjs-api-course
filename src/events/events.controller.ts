@@ -57,8 +57,17 @@ export class EventsController {
         });
     }
     
+    @Get('/practice2')
+    async practice2() {
+        return await this.repository.findOne(1, {
+            //loadEagerRelations: false // Do not load the related records
+            relations: ['attendees'] // Load specific relations
+        });
+        //return await this.repository.findOne(1);
+    }
+    
     @Get(':id')
-        async findOne(@Param('id') id) {
+    async findOne(@Param('id') id) {
         const event = await this.repository.findOne(id);
         if (!event) {
             throw new NotFoundException(`Event #${id} not found`);
