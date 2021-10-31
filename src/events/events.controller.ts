@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Patch, Post } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Logger, NotFoundException, Param, Patch, Post } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Like, MoreThan, Repository } from "typeorm";
 import { CreateEventDto } from "./create-event.dto";
@@ -49,7 +49,12 @@ export class EventsController {
 
     @Get(':id')
     async findOne(@Param('id') id) {
-        return await this.repository.findOne(id);
+        const event = await this.repository.findOne(id);
+        if (!event) {
+            throw new NotFoundException(`Event #${id} not found`);
+        }
+
+        return event;
     }
 
     @Post()
