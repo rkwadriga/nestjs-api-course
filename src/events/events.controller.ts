@@ -11,7 +11,7 @@ import {
     Post, Query, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
-import {Like, MoreThan, Repository} from 'typeorm';
+import {DeleteResult, Like, MoreThan, Repository} from 'typeorm';
 import {CreateEventDto} from './input/create-event.dto';
 import {Event} from './event.entity';
 import {UpdateEventDto} from './input/update.event.dto';
@@ -25,7 +25,7 @@ export class EventsController {
     
     constructor(
         @InjectRepository(Event)
-        private readonly repository: Repository<Event>,
+        private readonly eventsRepository: Repository<Event>,
 
         @InjectRepository(Attendee)
         private readonly attendeeRepository: Repository<Attendee>,
@@ -55,7 +55,7 @@ export class EventsController {
     
     @Get('/practice')
     async practice() {
-        return await this.repository.find({
+        return await this.eventsRepository.find({
             select: ['id', 'name', 'when'],
             //where: {id: 3}
             where: [
@@ -99,7 +99,7 @@ export class EventsController {
         
         //return await this.attendeeRepository.find({event: event});
         
-        return  this.repository.createQueryBuilder('e')
+        return  this.eventsRepository.createQueryBuilder('e')
             .select([
                 'e.id',
                 'e.name'
@@ -123,7 +123,7 @@ export class EventsController {
     //async create(@Body(ValidationPipe) input: CreateEventDto) { // Use this option if the ValidationPipe doesn't enabled in main.ts
     //async create(@Body(new ValidationPipe({groups: ['create']})) input: CreateEventDto) {
     async create(@Body() input: CreateEventDto) {
-        return await this.repository.save({
+        return await this.eventsRepository.save({
             ...input,
             when: new Date(input.when),
         });
@@ -131,9 +131,9 @@ export class EventsController {
     
     @Patch(':id')
     async update(@Param('id') id, @Body() input: UpdateEventDto) {
-        const event = await this.repository.findOne(id);
+        const event = await this.eventsRepository.findOne(id);
         
-        return await this.repository.save({
+        return await this.eventsRepository.save({
             ...event,
             ...input,
             when: input.when ? new Date(input.when) : event.when,
@@ -143,8 +143,16 @@ export class EventsController {
     @Delete(':id')
     @HttpCode(204) // No content
     async remove(@Param('id') id) {
-        const event = await this.repository.findOne(id);
-        
-        await this.repository.remove(event);
+        const result = await this.deleteEvent(id);
+        if (!result.affected) {
+            throw new NotFoundException(`Event #${id} not found`);
+        }
+    }
+    
+    private async deleteEvent(id: number): Promise<DeleteResult> {
+        return await this.eventsRepository.createQueryBuilder('e')
+            .delete()
+            .where({id})
+            .execute();
     }
 }
