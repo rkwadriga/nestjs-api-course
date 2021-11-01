@@ -56,7 +56,7 @@ export class TrainingController {
             .update()
             .set({ name: "Confidential" })
             .execute();*/
-      
+        
         await this.subjectRepository.createQueryBuilder('s')
             .update()
             .set({name: "Confidential"})

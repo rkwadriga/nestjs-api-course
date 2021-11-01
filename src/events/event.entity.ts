@@ -3,30 +3,30 @@ import {Attendee} from "./attendee.entity";
 
 @Entity()
 export class Event {
-  @PrimaryGeneratedColumn()
-  id: number;
-  
-  @Column()
-  name: string;
-  
-  @Column()
-  description: string;
-  
-  @Column()
-  when: Date;
-  
-  @Column()
-  address: string;
-  
-  @OneToMany(() => Attendee, (attendee) => attendee.event, {
-    //eager: true, // Load the related records always
-    //cascade: ['insert', 'update'], // For specific operations
-    cascade: true // For all operations
-  })
-  attendees: Attendee[];
-  
-  attendeeCount?: number;
-  attendeeAccepted?: number;
-  attendeeMaybe?: number;
-  attendeeRejected?: number;
+    @PrimaryGeneratedColumn()
+    id: number;
+    
+    @Column()
+    name: string;
+    
+    @Column()
+    description: string;
+    
+    @Column()
+    when: Date;
+    
+    @Column()
+    address: string;
+    
+    @OneToMany(() => Attendee, (attendee) => attendee.event, {
+        //eager: true, // Load the related records always
+        //cascade: ['insert', 'update'], // For specific operations
+        cascade: true // For all operations
+    })
+    attendees: Attendee[];
+    
+    attendeeCount?: number;
+    attendeeAccepted?: number;
+    attendeeMaybe?: number;
+    attendeeRejected?: number;
 }
