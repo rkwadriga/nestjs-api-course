@@ -3,6 +3,8 @@ import { Event } from "src/events/event.entity";
 import { Attendee } from "../events/attendee.entity";
 import {Subject} from "../school/subject.entity";
 import {Teacher} from "../school/teacher.entity";
+import {User} from "../auth/user.entity";
+import {Profile} from "../auth/profile.entity";
 
 export default (): TypeOrmModuleOptions => ({
     type: 'mysql',
@@ -17,6 +19,8 @@ export default (): TypeOrmModuleOptions => ({
         Attendee,
         Subject,
         Teacher,
+        User,
+        Profile
     ],
     synchronize: true
 });
