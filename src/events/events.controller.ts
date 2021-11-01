@@ -8,7 +8,7 @@ import {
     NotFoundException,
     Param,
     Patch,
-    Post, Query,
+    Post, Query, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {Like, MoreThan, Repository} from 'typeorm';
@@ -34,15 +34,23 @@ export class EventsController {
     ) {}
     
     @Get()
+    @UsePipes(new ValidationPipe({transform: true}))
     async findAll(@Query() filter: ListEvents) {
         if (filter && typeof filter.when === 'string') {
             filter.when = parseInt(filter.when);
         }
         this.logger.log('Hit the findAll route');
-        const events = await this.eventsService.getEventsWithAttendeeCountFiltered(filter);
-        this.logger.debug(`Found ${events.length} events`);
+        const paginator = await this.eventsService.getEventsWithAttendeeCountFilteredPaginated(
+            filter,
+            {
+                total: true,
+                currentPage: filter.page,
+                limit: 3
+            }
+        );
+        this.logger.debug(`Found ${paginator.data.length} events`);
         
-        return events;
+        return paginator;
     }
     
     @Get('/practice')
