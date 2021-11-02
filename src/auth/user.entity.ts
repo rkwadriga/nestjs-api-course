@@ -1,4 +1,4 @@
-import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn} from "typeorm";
+import {Column, Entity, JoinColumn, OneToOne, PrimaryGeneratedColumn, Unique} from "typeorm";
 import {Profile} from "./profile.entity";
 
 
@@ -7,13 +7,13 @@ export class User {
     @PrimaryGeneratedColumn()
     id: number;
     
-    @Column()
+    @Column({unique: true})
     username: string;
     
     @Column()
     password: string;
     
-    @Column()
+    @Column({unique: true})
     email: string;
     
     @Column()
