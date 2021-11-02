@@ -8,6 +8,7 @@ import { AppService } from './app.service';
 import ormConfig from './config/orm.config';
 import { EventsModule } from './events/events.module';
 import {SchoolModule} from "./school/school.module";
+import {AuthModule} from "./auth/auth.module";
 
 @Module({
     imports: [
@@ -28,6 +29,7 @@ import {SchoolModule} from "./school/school.module";
             entities: [Event],
             synchronize: true
         }),*/
+        AuthModule,
         EventsModule,
         SchoolModule
     ],
