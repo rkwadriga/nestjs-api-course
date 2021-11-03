@@ -8,7 +8,7 @@ import {
     NotFoundException,
     Param,
     Patch,
-    Post, Query, UsePipes, ValidationPipe,
+    Post, Query, UseGuards, UsePipes, ValidationPipe,
 } from '@nestjs/common';
 import {InjectRepository} from '@nestjs/typeorm';
 import {DeleteResult, Like, MoreThan, Repository} from 'typeorm';
@@ -18,6 +18,9 @@ import {UpdateEventDto} from './input/update.event.dto';
 import {Attendee} from "./attendee.entity";
 import {EventsService} from "./events.service";
 import {ListEvents} from "./input/list.events";
+import {User} from "../auth/user.entity";
+import {CurrentUser} from "../auth/current-user.decorator";
+import {AuthGuardJwt} from "../auth/auth-guard.jwt";
 
 @Controller('/events')
 export class EventsController {
@@ -120,13 +123,11 @@ export class EventsController {
     }
     
     @Post()
+    @UseGuards(AuthGuardJwt)
     //async create(@Body(ValidationPipe) input: CreateEventDto) { // Use this option if the ValidationPipe doesn't enabled in main.ts
     //async create(@Body(new ValidationPipe({groups: ['create']})) input: CreateEventDto) {
-    async create(@Body() input: CreateEventDto) {
-        return await this.eventsRepository.save({
-            ...input,
-            when: new Date(input.when),
-        });
+    async create(@Body() input: CreateEventDto, @CurrentUser() user: User) {
+        return await this.eventsService.createEvent(input, user);
     }
     
     @Patch(':id')
