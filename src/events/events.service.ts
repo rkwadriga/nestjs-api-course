@@ -1,12 +1,13 @@
 import {InjectRepository} from "@nestjs/typeorm";
 import {Event} from "./event.entity";
-import {Repository, SelectQueryBuilder} from "typeorm";
+import {DeleteResult, Repository, SelectQueryBuilder} from "typeorm";
 import {Injectable, Logger} from "@nestjs/common";
 import {AttendeeAnswerEnum} from "./attendee.entity";
 import {ListEvents, WhenEventFilter} from "./input/list.events";
 import {paginate, PaginateOptions} from "../pagination/paginator";
 import {CreateEventDto} from "./input/create-event.dto";
 import {User} from "../auth/user.entity";
+import {UpdateEventDto} from "./input/update.event.dto";
 
 @Injectable()
 export  class EventsService {
@@ -37,6 +38,21 @@ export  class EventsService {
             when: new Date(input.when),
             organizer: user
         });
+    }
+    
+    public async updateEvent(event: Event, input: UpdateEventDto): Promise<Event> {
+        return await this.eventsRepository.save({
+            ...event,
+            ...input,
+            when: input.when ? new Date(input.when) : event.when
+        });
+    }
+    
+    public async removeEvent(event: Event): Promise<DeleteResult> {
+        return await this.eventsRepository.createQueryBuilder('e')
+            .delete()
+            .where({id: event.id})
+            .execute();
     }
     
     private getEventsWithAttendeeCountFilteredQuery(filter?: ListEvents): SelectQueryBuilder<Event> {

@@ -32,6 +32,9 @@ export class Event {
     })
     organizer: User;
     
+    @Column()
+    organizer_id: number;
+    
     attendeeCount?: number;
     attendeeAccepted?: number;
     attendeeMaybe?: number;
