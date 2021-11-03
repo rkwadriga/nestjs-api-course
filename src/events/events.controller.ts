@@ -1,5 +1,5 @@
 import {
-    Body,
+    Body, ClassSerializerInterceptor,
     Controller,
     Delete, ForbiddenException,
     Get,
@@ -8,7 +8,13 @@ import {
     NotFoundException,
     Param,
     Patch,
-    Post, Query, UseGuards, UsePipes, ValidationPipe,
+    Post,
+    Query,
+    SerializeOptions,
+    UseGuards,
+    UseInterceptors,
+    UsePipes,
+    ValidationPipe,
 } from '@nestjs/common';
 import {CreateEventDto} from './input/create-event.dto';
 import {UpdateEventDto} from './input/update.event.dto';
@@ -19,6 +25,7 @@ import {CurrentUser} from "../auth/current-user.decorator";
 import {AuthGuardJwt} from "../auth/auth-guard.jwt";
 
 @Controller('/events')
+@SerializeOptions({strategy: 'excludeAll'})
 export class EventsController {
     private readonly logger = new Logger(EventsController.name);
     
@@ -28,6 +35,7 @@ export class EventsController {
     
     @Get()
     @UsePipes(new ValidationPipe({transform: true}))
+    //@UseInterceptors(ClassSerializerInterceptor)
     async findAll(@Query() filter: ListEvents) {
         if (filter && typeof filter.when === 'string') {
             filter.when = parseInt(filter.when);
@@ -47,6 +55,7 @@ export class EventsController {
     }
     
     @Get(':id')
+    @UseInterceptors(ClassSerializerInterceptor)
     async findOne(@Param('id') id) {
         const event = await this.eventsService.getEvent(id);
         if (!event) {
@@ -58,6 +67,7 @@ export class EventsController {
     
     @Post()
     @UseGuards(AuthGuardJwt)
+    @UseInterceptors(ClassSerializerInterceptor)
     //async create(@Body(ValidationPipe) input: CreateEventDto) { // Use this option if the ValidationPipe doesn't enabled in main.ts
     //async create(@Body(new ValidationPipe({groups: ['create']})) input: CreateEventDto) {
     async create(@Body() input: CreateEventDto, @CurrentUser() user: User) {
@@ -66,6 +76,7 @@ export class EventsController {
     
     @Patch(':id')
     @UseGuards(AuthGuardJwt)
+    @UseInterceptors(ClassSerializerInterceptor)
     async update(@Param('id') id, @Body() input: UpdateEventDto, @CurrentUser() user: User) {
         const event = await this.eventsService.getEvent(id)
         if (!event) {
