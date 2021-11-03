@@ -35,7 +35,7 @@ export class EventsController {
     
     @Get()
     @UsePipes(new ValidationPipe({transform: true}))
-    //@UseInterceptors(ClassSerializerInterceptor)
+    @UseInterceptors(ClassSerializerInterceptor)
     async findAll(@Query() filter: ListEvents) {
         if (filter && typeof filter.when === 'string') {
             filter.when = parseInt(filter.when);
