@@ -1,5 +1,5 @@
 import {InjectRepository} from "@nestjs/typeorm";
-import {Event} from "./event.entity";
+import {Event, PaginatedEvents} from "./event.entity";
 import {DeleteResult, Repository, SelectQueryBuilder} from "typeorm";
 import {Injectable, Logger} from "@nestjs/common";
 import {AttendeeAnswerEnum} from "./attendee.entity";
@@ -25,7 +25,7 @@ export  class EventsService {
         return await query.getOne();
     }
     
-    public async getEventsWithAttendeeCountFilteredPaginated(filter: ListEvents, paginateOptions: PaginateOptions) {
+    public async getEventsWithAttendeeCountFilteredPaginated(filter: ListEvents, paginateOptions: PaginateOptions): Promise<PaginatedEvents> {
         return await paginate(
             this.getEventsWithAttendeeCountFilteredQuery(filter),
             paginateOptions
@@ -53,6 +53,30 @@ export  class EventsService {
             .delete()
             .where({id: event.id})
             .execute();
+    }
+    
+    public async getEventsOrganizedByUserIdPaginated(userId: number, paginateOptions: PaginateOptions): Promise<PaginatedEvents> {
+        return await paginate<Event>(
+            this.getEventsOrganizedByUserIdQuery(userId),
+            paginateOptions
+        );
+    }
+    
+    public async getEventsAttendedByUserIdPaginated(userId: number, paginateOptions: PaginateOptions): Promise<PaginatedEvents> {
+        return await paginate<Event>(
+            this.getEventsAttendedByUserIdQuery(userId),
+            paginateOptions
+        );
+    }
+    
+    private getEventsAttendedByUserIdQuery(userId: number): SelectQueryBuilder<Event> {
+        return this.getEventsBaseQuery()
+            .leftJoinAndSelect('e.attendees', 'a')
+            .andWhere('a.user_id = :userId', {userId});
+    }
+    
+    private getEventsOrganizedByUserIdQuery(userId: number): SelectQueryBuilder<Event> {
+        return this.getEventsBaseQuery().andWhere({organizer: {id: userId}});
     }
     
     private getEventsWithAttendeeCountFilteredQuery(filter?: ListEvents): SelectQueryBuilder<Event> {
