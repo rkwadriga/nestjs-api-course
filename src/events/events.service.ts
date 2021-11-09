@@ -18,7 +18,11 @@ export  class EventsService {
         private readonly eventsRepository: Repository<Event>
     ) {}
     
-    public async getEvent(id: number): Promise<Event|undefined> {
+    public async findOne(id: number): Promise<Event|undefined> {
+        return await this.eventsRepository.findOne({id});
+    }
+    
+    public async getEventWithAttendeeCount(id: number): Promise<Event|undefined> {
         const query = this.getEventWithAttendeeCountQuery().andWhere({id});
         this.logger.debug(query.getSql());
         
@@ -33,19 +37,19 @@ export  class EventsService {
     }
     
     public async createEvent(input: CreateEventDto, user: User): Promise<Event> {
-        return await this.eventsRepository.save({
+        return await this.eventsRepository.save(new Event({
             ...input,
             when: new Date(input.when),
             organizer: user
-        });
+        }));
     }
     
     public async updateEvent(event: Event, input: UpdateEventDto): Promise<Event> {
-        return await this.eventsRepository.save({
+        return await this.eventsRepository.save(new Event({
             ...event,
             ...input,
             when: input.when ? new Date(input.when) : event.when
-        });
+        }));
     }
     
     public async removeEvent(event: Event): Promise<DeleteResult> {

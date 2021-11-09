@@ -57,4 +57,8 @@ export class Event {
     
     @Expose()
     attendeeRejected?: number;
+    
+    constructor(partial?: Partial<Event>) {
+        Object.assign(this, partial);
+    }
 }
