@@ -9,7 +9,7 @@ describe('EventsService', () => {
     let service: EventsService;
     let repository: Repository<Event>;
     
-    beforeEach(() => {
+    beforeEach(async () => {
         const module = await Test.createTestingModule({
             providers: [
                 EventsService,
