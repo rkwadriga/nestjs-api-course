@@ -10,6 +10,8 @@ services:
       MYSQL_DATABASE: nest_events
       MYSQL_USER: admin
       MYSQL_PASSWORD: admin
+    volumes:
+      - .docker/mysql/setup.sql:/docker-entrypoint-initdb.d/setup.sql
     ports:
       - 3304:3306
 

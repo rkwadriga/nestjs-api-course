@@ -1,6 +1,6 @@
-import { TypeOrmModuleOptions } from "@nestjs/typeorm";
-import { Event } from "src/events/event.entity";
-import { Attendee } from "../events/attendee.entity";
+import {TypeOrmModuleOptions} from "@nestjs/typeorm";
+import {Event} from "../events/event.entity";
+import {Attendee} from "../events/attendee.entity";
 import {Subject} from "../school/subject.entity";
 import {Teacher} from "../school/teacher.entity";
 import {User} from "../auth/user.entity";

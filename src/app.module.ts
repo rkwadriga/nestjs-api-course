@@ -15,7 +15,8 @@ import {AuthModule} from "./auth/auth.module";
         ConfigModule.forRoot({
             isGlobal: true,
             load: [ormConfig],
-            expandVariables: true // Allows to do something like "SUPPORT_EMAIL=support@${APP_URL}" in .env files
+            expandVariables: true, // Allows to do something like "SUPPORT_EMAIL=support@${APP_URL}" in .env.dev file
+            envFilePath: `.env.${process.env.NODE_ENV}` // This variable is set in package.json file (scripts.start:dev section for example)
         }),
         TypeOrmModule.forRootAsync({useFactory: ormConfig}),
         /*TypeOrmModule.forRoot({
