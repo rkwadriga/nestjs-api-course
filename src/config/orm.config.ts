@@ -22,5 +22,6 @@ export default (): TypeOrmModuleOptions => ({
         User,
         Profile
     ],
-    synchronize: true
+    synchronize: true,
+    dropSchema: Boolean(parseInt(process.env.DB_DROP_SCHEMA))
 });
